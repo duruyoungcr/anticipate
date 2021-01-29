@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f50808" />
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="prospective.css">
+    <link rel="icon" href="./images/favicon.png" />
+    <title>Ginjaa | Get early access</title>
+</head>
+<body>
+    <main>
+        <img src="./images/logo-white.png" alt="ginjaa_logo_white" class="logo">
+        <div class="form-container">
+                <div class="pre-modal">
+                    <h1 class="pre-modal-title">Hungry ?</h1>
+                    <h1 class="pre-modal-title">Gingaa it!</h1>
+                    <p class="pre-modal-subtitle">we are coming to your neighbourhood</p>
+                    <button class="modal-btn">get early access</button>
+                </div>
+                <form class="form">
+                    <img src="./images/close.svg" alt="close_btn" class="close-btn">
+                    <div class="form_input_group">
+                        <img src="./images/User.svg" alt="user_icon">
+                        <input type="text" name="name" id="name" placeholder="Full name" required> 
+                    </div>
+                    <div class="form_input_group">
+                        <img src="./images/mail.svg" alt="mail_icon">
+                        <input type="email" name="email" id="email" placeholder="Email address" required>
+                    </div>
+                    <div class="form_input_group">
+                        <img src="./images/phone.svg" alt="phone_icon">
+                        <input type="tel" name="tel" id="tel" placeholder="Phone number" required>
+                    </div>
+                    <div class="form_input_group">
+                        <select name="area" class="area area1" required>
+                            <option value="" selected disabled>Select area of residence</option>
+                        </select>
+                    </div>
+                    <div class="form_input_group">
+                        <select name="area" class="area area2" required>
+                            <option value="" selected disabled>Select area of work</option>
+                        </select>
+                    </div>
+                    <button class="submit-btn" type="submit" >Submit</button>
+                </form>
+        </div>
+    </main>
+</body>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    const lagosLGAS = ["Agege", "Ajeromi-Ifelodun", "Alimosho", "Amuwo-Odofin", "Apapa", "Badagry", "Epe", "Eti Osa", "Ibeju-Lekki", "Ifako-Ijaiye", "Ikeja", "Ikorodu", "Kosofe", "Lagos Island", "Lagos Mainland", "Mushin", "Ojo", "Oshodi-Isolo", "Shomolu", "Surulere"]
+    const selects = document.querySelectorAll(".area");
+    const premodal = document.querySelector(".pre-modal");
+    window.addEventListener("DOMContentLoaded", () => {
+        selects.forEach((select) => {
+            lagosLGAS.map((area) => {
+                let option = new Option(area,  area);
+                select.appendChild(option);
+            })
+        })
+    })
+    const modalBtn = document.querySelector(".modal-btn")
+    const closeBtn = document.querySelector(".close-btn")
+    const form = document.querySelector(".form")
+    const submitBtn = document.querySelector(".submit-btn")
+
+    modalBtn.addEventListener("click", () => {
+        toggleModal();
+    })
+    closeBtn.addEventListener("click", () => {
+        toggleModal();
+    })
+
+    function toggleModal() {
+        premodal.classList.toggle("open")
+        form.classList.toggle("open");
+        
+    }
+
+        const name = document.querySelector('#name');
+        const email = document.querySelector('#email');
+        const phone = document.querySelector('#tel');
+        const residenceArea = document.querySelector('.area1');
+        const workArea = document.querySelector('.area2');
+        //const axios = require('axios');
+
+    form.addEventListener('submit' , (e) => {
+        
+        // fetch('https://api.ginjaa.com/api/store-prospective-user', {
+        //     method: "POST",
+        //     body: JSON.stringify(data)
+        // }).then((response) => response.json()).then(
+        //     swal("submitted", success)
+        // )
+        const proxyurl = "https://cors-anywhere.herokuapp.com/";
+        const data = {
+            name: name.value,
+            email: email.value,
+            phone: phone.value,
+            home: residenceArea.value,
+            work: workArea.value
+        }
+        axios({
+            method: 'post',
+            url:'https://api.ginjaa.com/public/api/store-prospective-user',
+            data,
+            header: {
+                "access-control-allow-origin": "*",
+                "cache-control": "no-cache, private, no-store",
+                "connection": "keep-alive",
+                "content-encoding": "gzip",
+                "content-type": "application/json",
+            } 
+        }).then((response) => {
+            if (response.data.status) {
+                swal("Success!", "Form submitted successfully!", "success");
+                form.reset();
+                toggleModal();
+            }
+            else {
+                swal("works!", "Email or Phone already used", "error")
+            }
+        })
+        .catch((error) => {
+            swal("Error!", "Email or Phone already used", "error")
+        })
+        e.preventDefault();
+    })
+</script>
+</html>
